@@ -36,8 +36,8 @@ jobs:
       - name: "Build Docker Image"
         run: |
           docker login -u riyazmanandhar -p $DOCKERHUB_PAT
-          docker build -t riyazmanandhar/nginx .
-          docker push riyazmanandhar/nginx
+          docker build -t riyazmanandhar/semester3:1.0 .
+          docker push riyazmanandhar/semester3:1.0
         env:
           DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
 
