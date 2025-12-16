@@ -18,8 +18,8 @@ jobs:
       - name: "Build Docker Image"
         run: |
           docker login -u riyazmanandhar -p $DOCKERHUB_PAT
-          docker build -t riyazmanandhar/semester3:1.0 .
-          docker push riyazmanandhar/semester3:1.0
+          docker build -t riyazmanandhar/semester3 .
+          docker push riyazmanandhar/semester3
         env:
           DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: "Docker Pull and Restart Docker"
         run: |
-          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker pull riyazmanandhar/semester3:1.0'
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker pull riyazmanandhar/semester3'
           ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker stop nginx33 || true && docker rm nginx33 || true'
 
-          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name nginx33 -p 80:80 -d riyazmanandhar/semester3:1.0'
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name nginx33 -p 80:80 -d riyazmanandhar/semester3'
