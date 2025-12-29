@@ -1,4 +1,9 @@
-FROM nginx:latest
-COPY index.html /usr/share/nginx/html/index.html
-COPY abc.css /usr/share/nginx/html/abc.css
-EXPOSE 80
+FROM node:18-alpine
+
+WORKDIR /app
+
+RUN npm install -g juice-shop
+
+EXPOSE 3000
+
+CMD ["juice-shop"]
