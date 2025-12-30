@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: CloudFormation template to create a VPC, IG, subnet, route table, SG, and EC2 instance.
+Description: CloudFormation template to create a VPC, IG, subnet, route table, SG, and EC2 instance for Juice Shop.
 
 Parameters:
   KeyPair:
@@ -15,14 +15,14 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: LabVPC
+          Value: JuiceShopVPC
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: LabInternetGateway
+          Value: JuiceShopIG
 
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -35,10 +35,10 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       CidrBlock: 10.0.0.0/24
-      AvailabilityZone: us-east-1a # According to Region
+      AvailabilityZone: us-east-1a
       Tags:
         - Key: Name
-          Value: LabSubnet
+          Value: JuiceShopSubnet
 
   RouteTable:
     Type: AWS::EC2::RouteTable
@@ -46,7 +46,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: LabRouteTable
+          Value: JuiceShopRouteTable
 
   Route:
     Type: AWS::EC2::Route
@@ -64,51 +64,43 @@ Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow SSH and HTTP traffic
+      GroupDescription: Allow SSH, HTTP, and Juice Shop traffic
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0 # Allow from any IP
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 0.0.0.0/0 # Allow from any IP
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: LabSecurityGroup
+          Value: JuiceShopSG
 
   EC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
       Tags:
-      - Key: Name
-        Value: MyEC2
-      
-      ImageId: ami-084568db4383264d4 # Ubuntu 24.04 LTS in us-east-1 region 
-    
-      InstanceType: t2.micro # 1 Core CPU, 1 GB RAM, Free Tier
-      
+        - Key: Name
+          Value: JuiceShopEC2
+      ImageId: ami-084568db4383264d4 # Ubuntu 24.04 LTS
+      InstanceType: t2.micro
       KeyName: !Ref KeyPair
-
-      # Network settings
       SubnetId: !Ref Subnet
       SecurityGroupIds:
         - !Ref SecurityGroup
-        # - !GetAtt "SecurityGroup.GroupId"
- 
-      # Configure storage
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
-        # BlockDeviceMapping-DeviceName needs to be match with AMI specifications.
-        # aws ec2 describe-images --region us-east-1 --image-ids ami-084568db4383264d4
           Ebs:
             VolumeType: gp2
-            VolumeSize: 20 # Disk Size in GB
+            VolumeSize: 20
             DeleteOnTermination: true
-
-      # Advanced details
       DisableApiTermination: false
       CreditSpecification:
         CPUCredits: standard
@@ -120,8 +112,8 @@ Resources:
       Domain: vpc
       InstanceId: !Ref EC2Instance
       Tags:
-      - Key: Name
-        Value: LabElasticIP
+        - Key: Name
+          Value: JuiceShopEIP
 
 Outputs:
   ElasticIPPublicIP:
@@ -129,10 +121,10 @@ Outputs:
     Description: The Public IP address associated with the Elastic IP address.
   PrivateIp:
     Value: !GetAtt EC2Instance.PrivateIp
-    Description: The private IP address of the specified instance.
+    Description: The private IP address of the EC2 instance.
   PublicDnsName:
     Value: !GetAtt EC2Instance.PublicDnsName
-    Description: The public DNS name of the specified instance.
+    Description: The public DNS name of the EC2 instance.
   PublicIp:
     Value: !GetAtt EC2Instance.PublicIp
-    Description: The public IP address of the specified instance.
+    Description: The public IP address of the EC2 instance.
