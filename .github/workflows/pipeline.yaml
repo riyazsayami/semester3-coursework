@@ -43,6 +43,6 @@ jobs:
       - name: "Docker Pull and Restart Docker"
         run: |
           ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker pull riyazmanandhar/juice-shop:latest'
-          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker stop juice-shop && docker rm juice-shop'
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker stop juice-shop||true && docker rm juice-shop||true'
 
           ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name juice-shop -p 3000:3000 -d riyazmanandhar/juice-shop:latest'
