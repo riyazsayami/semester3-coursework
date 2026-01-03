@@ -1,25 +1,23 @@
-name: Deploy to Server
+
+name: "Deploy to Server"
 
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+      branches:
+        - main
 
 jobs:
+  
   deploy:
-    name: Deploy to EC2
-    needs: build
     runs-on: ubuntu-latest
-
     env:
       SERVER_IP: ${{ vars.SERVER_IP }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Build and Push Docker Image
+      - name: "Build Docker Image"
         run: |
           docker login -u riyazmanandhar -p $DOCKERHUB_PAT
           docker build -t riyazmanandhar/juice-shop:latest .
@@ -27,26 +25,25 @@ jobs:
         env:
           DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
 
-      - name: Configure SSH
+      - name: "Configure SSH"
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-          chmod 600 ~/.ssh/config
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-
-      - name: Add SSH key
+      
+      - name: "Put SSH Key in Docker file for Server Access"
         run: |
-          echo "$SSH_KEY64" | base64 -d > pem.pem
-          chmod 400 pem.pem
+          touch pem.pem
+          echo $SSH_KEY64 | base64 -d > pem.pem && chmod 400 pem.pem
           ssh-keygen -R $SERVER_IP
-        env:
+        env: 
           SSH_KEY64: ${{ secrets.SSH_KEY64 }}
 
-      - name: Deploy container on EC2
+      - name: "Docker Pull and Restart Docker"
         run: |
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker pull riyazmanandhar/juice-shop:latest"
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker stop juice-shop || true"
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker rm juice-shop || true"
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker run -d --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest"
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker pull riyazmanandhar/juice-shop:latest'
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker stop juice-shop||true && docker rm juice-shop||true'
+
+          ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name juice-shop -p 3000:3000 -d riyazmanandhar/juice-shop:latest'
