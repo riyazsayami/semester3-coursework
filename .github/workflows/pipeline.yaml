@@ -8,7 +8,6 @@ on:
         - main
 
 jobs:
-  jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
