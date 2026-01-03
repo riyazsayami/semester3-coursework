@@ -47,3 +47,4 @@ jobs:
           ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker stop juice-shop||true && docker rm juice-shop||true'
 
           ssh -t ubuntu@$SERVER_IP -i pem.pem 'docker run --name juice-shop -p 3000:3000 -d riyazmanandhar/juice-shop:latest'
+  #done
