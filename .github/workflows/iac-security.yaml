@@ -1,14 +1,10 @@
 name: IaC Security Branch Workflow
 
 on:
-  push:
-    branches:
-      - iac-security
   workflow_dispatch:
 
 jobs:
   iac-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Print message
-        run: echo "IaC security workflow triggered successfully"
+      - run: echo "Manual IaC workflow trigger available"
