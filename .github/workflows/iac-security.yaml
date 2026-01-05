@@ -2,48 +2,23 @@ name: Trivy IaC Scan (CloudFormation)
 
 on:
   workflow_dispatch:
-    inputs:
-      severity:
-        description: "Choose Severity Level"
-        required: true
-        default: "CRITICAL,HIGH,MEDIUM"
-        type: choice
-        options:
-          - CRITICAL
-          - HIGH
-          - MEDIUM
-          - "CRITICAL,HIGH"
-          - "MEDIUM,HIGH"
-          - "CRITICAL,MEDIUM"
   push:
-    branches: [ "iac-security" ]  # triggers on push to iac-security branch
+    branches: [ "main" ]
 
 jobs:
   trivy-iac-scan:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Step 2: Run Trivy IaC scan
-      - name: Trivy IaC Scan
-        uses: aquasecurity/trivy-action@v2
+      - name: Run Trivy IaC scan
+        uses: aquasecurity/trivy-action@0.20.0
         with:
-          scan-type: iac
-          scan-ref: "."                      # scan root of repo
-          severity: ${{ inputs.severity }}   # dynamic severity
-          format: table
-          exit-code: 0                       # workflow won't fail
-
-      # Step 3: Save report
-      - name: Save Trivy report
-        run: trivy iac --format json --output trivy-report.json .
-
-      # Step 4: Upload Trivy report
-      - name: Upload Trivy report
-        uses: actions/upload-artifact@v3
-        with:
-          name: trivy-iac-report
-          path: trivy-report.json
+          scan-type: "config"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH,MEDIUM"
+          format: "table"
+          exit-code: "0"
+      #done
