@@ -22,12 +22,13 @@ jobs:
           format: "table"
           exit-code: "0"
       
+            # Save Trivy output to a file
       - name: Save Trivy report
-        run: trivy config --severity CRITICAL,HIGH,MEDIUM --format json --output trivy-report.json .
+        run: trivy config --severity ${{ inputs.severity || 'CRITICAL,HIGH,MEDIUM' }} --format json --output trivy-report.json .
 
-      # Step 2: Upload the report as artifact
+      # Upload the report artifact
       - name: Upload Trivy report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trivy-report
           path: trivy-report.json
