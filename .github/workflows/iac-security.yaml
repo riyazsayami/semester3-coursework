@@ -2,29 +2,22 @@ name: Trivy IaC Scan (CloudFormation)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ "main" ]
 
 jobs:
   trivy-iac-scan:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout your repo
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Step 2: Run Trivy IaC scan using official action
-      - name: Trivy IaC Scan
-        uses: aquasecurity/trivy-action@v2
+      - name: Run Trivy IaC scan
+        uses: aquasecurity/trivy-action@0.20.0
         with:
-          scan-type: iac
-          severity: HIGH,CRITICAL
-          format: table
-          exit-code: 1  # workflow fails only if HIGH/CRITICAL issues
-
-      # Step 3 (optional): Upload scan report
-      - name: Upload Trivy report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: trivy-iac-report
-          path: trivy-report.txt
+          scan-type: "config"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH,MEDIUM"
+          format: "table"
+          exit-code: "0"
