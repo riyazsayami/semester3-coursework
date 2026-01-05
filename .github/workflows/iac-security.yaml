@@ -1,10 +1,24 @@
-name: IaC Security Branch Workflow
+name: Trivy IaC Scan (CloudFormation)
 
 on:
+  push:
+    branches:
+      - iac-security
   workflow_dispatch:
 
 jobs:
-  iac-test:
+  trivy-iac-scan:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Manual IaC workflow trigger available"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy IaC scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: "config"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH,MEDIUM"
+          format: "table"
+          exit-code: "0"
