@@ -34,4 +34,12 @@ jobs:
           severity: ${{ inputs.severity }}
           format: "table"
           exit-code: "0"
-      #done
+      - name: Save Trivy report
+        run: trivy config --severity ${{ inputs.severity }} --format json --output trivy-report.json .
+
+      # Step 2: Upload the report as artifact
+      - name: Upload Trivy report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-report
+          path: trivy-report.json
