@@ -34,7 +34,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ubuntu
           key: |
-           ${{ secrets.SSH_KEY64 | fromBase64 }}
+           ${{ secrets.SSH_KEY64 }}
           script: |
             docker stop juice-shop || true
             docker rm juice-shop || true
