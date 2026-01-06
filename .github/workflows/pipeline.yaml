@@ -40,8 +40,9 @@ jobs:
         #   key: |
         #     ${{ secrets.SSH_KEY }}
         run: |
-            echo "${{ secrets.SSH_KEY }}" > riyaz.pem 
-            ssh ubuntu@54.235.194.192 -i riyaz.pem
+            mkdir -p ~/.ssh
+            printf "%s" "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
+            chmod 600 ~/.ssh/id_ed25519
             docker stop juice-shop || true
             docker rm juice-shop || true
             docker pull riyazmanandhar/juice-shop:latest
