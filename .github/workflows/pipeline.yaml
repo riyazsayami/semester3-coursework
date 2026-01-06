@@ -44,11 +44,12 @@ jobs:
             printf "%s" "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
             chmod 600 ~/.ssh/id_ed25519
             ssh-keyscan -H 54.235.194.192 >> ~/.ssh/known_hosts
-            ssh ubuntu@54.235.194.192 -i ~/.ssh/id_ed25519
-            docker stop juice-shop || true
-            docker rm juice-shop || true
-            docker pull riyazmanandhar/juice-shop:latest
-            docker run -d --restart=always --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest
+            ssh -i ~/.ssh/id_ed25519 ubuntu@54.235.194.192 \
+              "docker stop juice-shop || true && \
+               docker rm juice-shop || true && \
+               docker pull riyazmanandhar/juice-shop:latest && \
+               docker run -d --restart=always --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest"
+
 
 
 
