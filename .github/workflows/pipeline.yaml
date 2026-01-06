@@ -33,7 +33,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_IP }}    # your EC2 public IP secret
           username: ubuntu
-          key: ${{ secrets.EC2_KEY }}      # EC2 private key stored in secrets
+          key: ${{ secrets.SSH_KEY64 }}      # EC2 private key stored in secrets
           script: |
             docker stop juice-shop || true
             docker rm juice-shop || true
