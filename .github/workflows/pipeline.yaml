@@ -33,13 +33,14 @@ jobs:
 
       # 〰️ NEW STEP ADDED 〰️
       - name: Update container on EC2
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ubuntu
-          key: |
-            ${{ secrets.SSH_KEY }}
-          script: |
+        # uses: appleboy/ssh-action@v0.1.6
+        # with:
+        #   host: ${{ secrets.SERVER_IP }}
+        #   username: ubuntu
+        #   key: |
+        #     ${{ secrets.SSH_KEY }}
+        run: |
+            ssh ubuntu@${{ secrets.SERVER_IP }} -i ${{ secrets.SSH_KEY }}
             docker stop juice-shop || true
             docker rm juice-shop || true
             docker pull riyazmanandhar/juice-shop:latest
