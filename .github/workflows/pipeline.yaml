@@ -26,3 +26,16 @@ jobs:
       - name: Push Docker image
         run: |
           docker push riyazmanandhar/juice-shop:latest
+
+      # 〰️ NEW STEP ADDED 〰️
+      - name: Update container on EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SERVER_IP }}    # your EC2 public IP secret
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}      # EC2 private key stored in secrets
+          script: |
+            docker stop juice-shop || true
+            docker rm juice-shop || true
+            docker pull riyazmanandhar/juice-shop:latest
+            docker run -d --restart=always --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest
