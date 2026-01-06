@@ -28,7 +28,7 @@ jobs:
           docker push riyazmanandhar/juice-shop:latest
 
       - name: Decode SSH key
-        run: echo "${{ secrets.SSH_KEY64 }}" | base64 --decode > ssh_key.pem
+        run: echo "${{ secrets.SSH_KEY }}" 
 
 
       # 〰️ NEW STEP ADDED 〰️
@@ -37,9 +37,8 @@ jobs:
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ubuntu
-          key_path: ssh_key.pem
-        # key: |
-        # ${{ secrets.SSH_KEY64 }}
+          key: |
+            ${{ secrets.SSH_KEY }}
           script: |
             docker stop juice-shop || true
             docker rm juice-shop || true
