@@ -40,7 +40,8 @@ jobs:
         #   key: |
         #     ${{ secrets.SSH_KEY }}
         run: |
-            ssh ubuntu@54.235.194.192 -i ${{ secrets.SSH_KEY }}
+            echo "${{ secrets.SSH_KEY }}" > riyaz.pem 
+            ssh ubuntu@54.235.194.192 -i riyaz.pem
             docker stop juice-shop || true
             docker rm juice-shop || true
             docker pull riyazmanandhar/juice-shop:latest
