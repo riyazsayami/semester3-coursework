@@ -1,51 +1,28 @@
-
-name: "Deploy to Server"
+name: Build & Push Docker Image
 
 on:
-  workflow_dispatch:
   push:
-      branches:
-        - main
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    env:
-      SERVER_IP: ${{ vars.SERVER_IP }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: "Build Docker Image"
+      - name: Login to Docker Hub
         run: |
           docker login -u riyazmanandhar -p $DOCKERHUB_PAT
-          docker build -t riyazmanandhar/juice-shop:latest .
-          docker push riyazmanandhar/juice-shop:latest
         env:
           DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
 
-      - name: "Configure SSH"
+      - name: Build Docker image
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-          touch ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-      
-      - name: "Put SSH Key in Docker file for Server Access"
-        run: |
-          touch pem.pem
-          echo $SSH_KEY64 | base64 -d > pem.pem && chmod 400 pem.pem
-          ssh-keygen -R $SERVER_IP
-        env: 
-          SSH_KEY64: ${{ secrets.SSH_KEY64 }}
+          docker build -t riyazmanandhar/juice-shop:latest .
 
-      - name: Docker Pull and Restart Container
+      - name: Push Docker image
         run: |
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker pull riyazmanandhar/juice-shop:latest"
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker stop juice-shop || true"
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker rm juice-shop || true"
-          ssh -i pem.pem ubuntu@$SERVER_IP "docker run -d --restart unless-stopped --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest"
-
-  
+          docker push riyazmanandhar/juice-shop:latest

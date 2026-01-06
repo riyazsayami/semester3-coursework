@@ -7,6 +7,7 @@ Parameters:
     Description: Choose an existing KeyPair
 
 Resources:
+
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -64,16 +65,12 @@ Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow SSH, HTTP, and Juice Shop traffic
+      GroupDescription: Allow SSH and Juice Shop traffic
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 3000
@@ -84,26 +81,40 @@ Resources:
           Value: JuiceShopSG
 
   EC2Instance:
-    Type: 'AWS::EC2::Instance'
+    Type: AWS::EC2::Instance
     Properties:
       Tags:
         - Key: Name
           Value: JuiceShopEC2
-      ImageId: ami-084568db4383264d4 # Ubuntu 24.04 LTS
+      ImageId: ami-084568db4383264d4   # Ubuntu 24.04 LTS
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SubnetId: !Ref Subnet
       SecurityGroupIds:
         - !Ref SecurityGroup
+
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt update -y
+          apt install -y docker.io
+          systemctl start docker
+          systemctl enable docker
+          usermod -aG docker ubuntu
+
+          docker pull riyazmanandhar/juice-shop:latest
+          docker run -d \
+            --name juice-shop \
+            -p 3000:3000 \
+            --restart always \
+            riyazmanandhar/juice-shop:latest
+
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
             VolumeType: gp2
             VolumeSize: 20
             DeleteOnTermination: true
-      DisableApiTermination: false
-      CreditSpecification:
-        CPUCredits: standard
 
   ElasticIP:
     Description: "Elastic IP for the EC2 VM Instance"
@@ -118,13 +129,7 @@ Resources:
 Outputs:
   ElasticIPPublicIP:
     Value: !GetAtt ElasticIP.PublicIp
-    Description: The Public IP address associated with the Elastic IP address.
-  PrivateIp:
-    Value: !GetAtt EC2Instance.PrivateIp
-    Description: The private IP address of the EC2 instance.
+    Description: Public IP address
   PublicDnsName:
     Value: !GetAtt EC2Instance.PublicDnsName
-    Description: The public DNS name of the EC2 instance.
-  PublicIp:
-    Value: !GetAtt EC2Instance.PublicIp
-    Description: The public IP address of the EC2 instance.
+    Description: Public DNS name
