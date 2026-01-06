@@ -31,9 +31,10 @@ jobs:
       - name: Update container on EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SERVER_IP }}    # your EC2 public IP secret
+          host: ${{ secrets.SERVER_IP }}
           username: ubuntu
-          key: ${{ secrets.SSH_KEY64 }}      # EC2 private key stored in secrets
+          key: |
+           ${{ secrets.SSH_KEY64 | fromBase64 }}
           script: |
             docker stop juice-shop || true
             docker rm juice-shop || true
