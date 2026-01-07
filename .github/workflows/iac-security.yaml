@@ -19,8 +19,5 @@ jobs:
           scan-type: "config"
           scan-ref: "."
           severity: "CRITICAL,HIGH,MEDIUM"
-          format: "json"
-          output: trivy-report.json 
+          format: "table"
           exit-code: "0"
-      
-            
