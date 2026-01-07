@@ -32,8 +32,8 @@ jobs:
           scan-type: "config"
           scan-ref: "."
           severity: ${{ inputs.severity }}
-          format: "table"
-
+          format: "sarif"
+          output: "trivy-iac-results.sarif"
           exit-code: "0"
         
       - name: Upload SARIF report
@@ -41,3 +41,4 @@ jobs:
         with:
           name: trivy-iac-sarif-report
           path: trivy-iac-results.sarif
+
