@@ -21,34 +21,38 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
     #IaC Security Scan
-      - name: Install Trivy for IaC
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.43.3_Linux-64bit.deb
-        #update
-          sudo dpkg -i trivy_0.43.3_Linux-64bit.deb
-      - name: Run IaC Security Scan
-        run: |
-          trivy config --severity CRITICAL,HIGH,MEDIUM --format json --output trivy-iac-report.json .
-      - name: Upload Iac Security Report
+      - name: Run Trivy IaC Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: "config"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH,MEDIUM"
+          format: "sarif"
+          output: "trivy-iac-results.sarif"
+          exit-code: "0"
+        
+      - name: Upload IaC SARIF Report
         uses: actions/upload-artifact@v4
         with:
-          name: trivy-iac-report
-          path: trivy-iac-report.json
+          name: trivy-iac-sarif-report
+          path: trivy-iac-results.sarif
 
       #Container Security Scan
       - name: Build Docker Image for Security Scan
-        run: docker build -t juice-shop-temp .
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: "image"
+          scan-ref: "riyazmanandhar/juice-shop:latest"
+          severity: "CRITICAL,HIGH,MEDIUM"
+          format: "sarif"
+          output: "trivy-container-results.sarif"
+          exit-code: "0"
 
-      - name: Scan Docker Image
-        run: |
-          trivy image --severity CRITICAL,HIGH,MEDIUM --format json --output trivy-container-report.json juice-shop-temp
-      - name: Upload Container Security Report
+      - name: Upload Container SARIF Report
         uses: actions/upload-artifact@v4
         with:
-          name: trivy-container-report
-          path: trivy-container-report.json
+          name: trivy-container-sarif-report
+          path: trivy-container-results.sarif
 
       #Login to Docker Hub    
       - name: Login to Docker Hub
