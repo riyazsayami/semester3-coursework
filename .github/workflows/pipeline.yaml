@@ -38,15 +38,10 @@ jobs:
           path: trivy-iac-results.sarif
 
       #Container Security Scan
-      - name: Build Docker Image for Security Scan
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          scan-type: "image"
-          scan-ref: "riyazmanandhar/juice-shop:latest"
-          severity: "CRITICAL,HIGH,MEDIUM"
-          format: "sarif"
-          output: "trivy-container-results.sarif"
-          exit-code: "0"
+      - name: Run Container Security Scan
+        run: |
+        docker pull riyazmanandhar/juice-shop:latest
+        trivy image --severity CRITICAL,HIGH,MEDIUM --format sarif --output trivy-container-results.sarif riyazmanandhar/juice-shop:latest
 
       - name: Upload Container SARIF Report
         uses: actions/upload-artifact@v4
