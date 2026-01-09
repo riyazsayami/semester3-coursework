@@ -39,7 +39,7 @@ jobs:
 
       #Container Security Scan
       - name: Run Container Security Scan
-        uses: aquasecurity/trivy-action@v4
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           scan-type: image
           scan-ref: riyazmanandhar/juice-shop:latest
