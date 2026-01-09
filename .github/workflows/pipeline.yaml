@@ -42,7 +42,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.20.0
         with:
           scan-type: image
-          scan-ref: riyazmanandhar/juice-shop:latest
+          image-ref: riyazmanandhar/juice-shop:latest
           severity: CRITICAL,HIGH,MEDIUM
           format: sarif
           output: trivy-container-results.sarif
