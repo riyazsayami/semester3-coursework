@@ -19,7 +19,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          
+
     #IaC Security Scan
       - name: Install Trivy for IaC
         run: |
@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name:trivy-iac-report
-          path: trivy-iac-report.json
+          path: $GITHUB_WORKSPACE/trivy-iac-report.json
 
       #Container Security Scan
       - name: Build Docker Image for Security Scan
