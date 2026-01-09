@@ -82,4 +82,4 @@ jobs:
             docker rm juice-shop || true &&
             docker pull riyazmanandhar/juice-shop:latest &&
             docker run -d --restart=always --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest
-    "
+    
