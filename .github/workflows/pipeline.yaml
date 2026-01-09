@@ -40,8 +40,8 @@ jobs:
       #Container Security Scan
       - name: Run Container Security Scan
         run: |
-        docker pull riyazmanandhar/juice-shop:latest
-        trivy image --severity CRITICAL,HIGH,MEDIUM --format sarif --output trivy-container-results.sarif riyazmanandhar/juice-shop:latest
+          docker pull riyazmanandhar/juice-shop:latest
+          trivy image --severity CRITICAL,HIGH,MEDIUM --format sarif --output trivy-container-results.sarif riyazmanandhar/juice-shop:latest
 
       - name: Upload Container SARIF Report
         uses: actions/upload-artifact@v4
