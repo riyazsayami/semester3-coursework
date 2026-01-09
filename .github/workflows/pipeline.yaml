@@ -44,7 +44,7 @@ jobs:
         run: |
           trivy image --severity CRITICAL,HIGH,MEDIUM --format json --output trivy-container-report.json juice-shop-temp
       - name: Upload Container Security Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trivy-container-report
           path: trivy-container-report.json
