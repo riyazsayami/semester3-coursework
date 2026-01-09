@@ -38,15 +38,15 @@ jobs:
           path: trivy-iac-results.sarif
 
       #Container Security Scan
-      - name: Run Container Security Scan
+      - name: Container Security Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
           scan-type: image
-          scan-ref: riyazmanandhar/juice-shop:latest
-          severity: "CRITICAL,HIGH,MEDIUM"
+          image-ref: riyazmanandhar/juice-shop:latest
+          severity: CRITICAL,HIGH,MEDIUM
           format: sarif
           output: trivy-container-results.sarif
-          exit-code: 0
+          exit-code: "0
 
       #Login to Docker Hub    
       - name: Login to Docker Hub
