@@ -33,8 +33,8 @@ jobs:
       - name: Upload Iac Security Report
         uses: actions/upload-artifact@v3
         with:
-          name:trivy-iac-report
-          path: $GITHUB_WORKSPACE/trivy-iac-report.json
+          name: trivy-iac-report
+          path: trivy-iac-report.json
 
       #Container Security Scan
       - name: Build Docker Image for Security Scan
