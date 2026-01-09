@@ -31,7 +31,7 @@ jobs:
         run: |
           trivy config --severity CRITICAL,HIGH,MEDIUM --format json --output trivy-iac-report.json .
       - name: Upload Iac Security Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: trivy-iac-report
           path: trivy-iac-report.json
