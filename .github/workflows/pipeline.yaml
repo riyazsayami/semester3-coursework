@@ -68,8 +68,8 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push riyazmanandhar/juice-shop:latest
-
+          docker build -t riyazmanandhar/juice-shop:latest .
+          
       #Deploy to EC2    
       - name: Update container on EC2
         run: |
