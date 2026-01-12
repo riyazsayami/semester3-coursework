@@ -48,18 +48,16 @@ on:
   push:
     branches:
       - iac-security
-
   workflow_dispatch:
 
 jobs:
   trigger-iac:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Trigger IaC Scan in MAIN
+      - name: Trigger IaC Scan on MAIN
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPO_DISPATCH_PAT }}   # <-- new PAT secret
+          repository: riyazsayami/semester3-coursework
           event-type: iac-scan
-#new
 
