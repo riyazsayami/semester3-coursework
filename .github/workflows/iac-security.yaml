@@ -1,23 +1,58 @@
-name: Trivy IaC Scan (CloudFormation)
+# name: Trivy IaC Scan (CloudFormation)
+
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches: [ "main" ]
+
+# jobs:
+#   trivy-iac-scan:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Run Trivy IaC scan
+#         uses: aquasecurity/trivy-action@0.20.0
+#         with:
+#           scan-type: "config"
+#           scan-ref: "."
+#           severity: "CRITICAL,HIGH,MEDIUM"
+#           format: "table"
+#           exit-code: "0"
+name: Trivy IaC Scan (MAIN)
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+
+  workflow_dispatch:
+
+  repository_dispatch:
+    types: [ iac-scan ]
 
 jobs:
   trivy-iac-scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout MAIN repository
         uses: actions/checkout@v4
 
-      - name: Run Trivy IaC scan
+      - name: Run Trivy IaC Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
           scan-type: "config"
           scan-ref: "."
           severity: "CRITICAL,HIGH,MEDIUM"
-          format: "table"
+          format: "sarif"
+          output: "trivy-iac-results.sarif"
           exit-code: "0"
+
+      - name: Upload IaC SARIF Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-iac-sarif-report
+          path: trivy-iac-results.sarif
