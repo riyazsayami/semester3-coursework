@@ -36,7 +36,7 @@
 #           name: trivy-container-security-report
 #           path: trivy-container-results.sarif
 
-name: Trigger MAIN Container Scan
+name: Trigger Container Scan (MAIN BRANCH)
 
 on:
   push:
