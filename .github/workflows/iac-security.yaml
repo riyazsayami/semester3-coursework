@@ -1,44 +1,65 @@
-name: Trivy IaC Scan (CloudFormation)
+# name: Trivy IaC Scan (CloudFormation)
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       severity:
+#         description: "Choose Severity Level"
+#         required: true
+#         default: "CRITICAL,HIGH,MEDIUM"
+#         type: choice
+#         options:
+#           - CRITICAL
+#           - HIGH
+#           - MEDIUM
+#           - "CRITICAL,HIGH"
+#           - "MEDIUM, HIGH"
+#           - "CRITICAL, MEDIUM"
+#   push:
+#     branches: [ "main" ]
+
+# jobs:
+#   trivy-iac-scan:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Run Trivy IaC scan
+#         uses: aquasecurity/trivy-action@0.20.0
+#         with:
+#           scan-type: "config"
+#           scan-ref: "."
+#           severity: ${{ inputs.severity }}
+#           format: "sarif"
+#           output: "trivy-iac-results.sarif"
+#           exit-code: "0"
+        
+#       - name: Upload SARIF report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: trivy-iac-sarif-report
+#           path: trivy-iac-results.sarif
+
+name: Trigger MAIN IaC Scan
 
 on:
-  workflow_dispatch:
-    inputs:
-      severity:
-        description: "Choose Severity Level"
-        required: true
-        default: "CRITICAL,HIGH,MEDIUM"
-        type: choice
-        options:
-          - CRITICAL
-          - HIGH
-          - MEDIUM
-          - "CRITICAL,HIGH"
-          - "MEDIUM, HIGH"
-          - "CRITICAL, MEDIUM"
   push:
-    branches: [ "main" ]
+    branches:
+      - iac-security
+
+  workflow_dispatch:
 
 jobs:
-  trivy-iac-scan:
+  trigger-iac:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Trigger IaC Scan in MAIN
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: iac-scan
 
-      - name: Run Trivy IaC scan
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          scan-type: "config"
-          scan-ref: "."
-          severity: ${{ inputs.severity }}
-          format: "sarif"
-          output: "trivy-iac-results.sarif"
-          exit-code: "0"
-        
-      - name: Upload SARIF report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-iac-sarif-report
-          path: trivy-iac-results.sarif
 
