@@ -1,16 +1,26 @@
-name: Trigger Container Scan (CloudFormation)
+name: Container Image Security Scan
 
 on:
-  workflow_dispatch: # only manual, never triggers automatically
+  push:
+    branches:
+      - container-security
+  workflow_dispatch:
 
 jobs:
-  trigger-container:
+  container-scan:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Trigger Container Scan on MAIN
-        uses: peter-evans/repository-dispatch@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t juice-shop:latest .
+
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@0.20.0
         with:
-          token: ${{ secrets.REPO_DISPATCH_PAT }}
-          repository: riyazsayami/semester3-coursework
-          event-type: container-scan
-#new
+          image-ref: juice-shop:latest
+          severity: CRITICAL,HIGH,MEDIUM
+          format: table
