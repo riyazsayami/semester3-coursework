@@ -1,37 +1,57 @@
-name: Trivy Container Security Scan
+# name: Trivy Container Security Scan
+
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - container-security
+
+# jobs:
+#   container-security:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout source code
+#         uses: actions/checkout@v4
+
+#       - name: Set up Docker
+#         uses: docker/setup-buildx-action@v3
+
+#       - name: Build Docker image
+#         run: |
+#           docker build -t riyazmanandhar/juice-shop:containersecurity .
+
+#       - name: Trivy Container Image Scan
+#         uses: aquasecurity/trivy-action@0.20.0
+#         with:
+#           image-ref: "riyazmanandhar/juice-shop:containersecurity"
+#           severity: "CRITICAL,HIGH,MEDIUM"
+#           format: "sarif"
+#           output: "trivy-container-results.sarif"
+#           exit-code: "0"
+
+#       - name: Upload Container Security Report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: trivy-container-security-report
+#           path: trivy-container-results.sarif
+
+name: Trigger MAIN Container Scan
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - container-security
+  workflow_dispatch:
 
 jobs:
-  container-security:
+  trigger-container:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image
-        run: |
-          docker build -t riyazmanandhar/juice-shop:containersecurity .
-
-      - name: Trivy Container Image Scan
-        uses: aquasecurity/trivy-action@0.20.0
+      - name: Trigger Container Scan on MAIN
+        uses: peter-evans/repository-dispatch@v3
         with:
-          image-ref: "riyazmanandhar/juice-shop:containersecurity"
-          severity: "CRITICAL,HIGH,MEDIUM"
-          format: "sarif"
-          output: "trivy-container-results.sarif"
-          exit-code: "0"
-
-      - name: Upload Container Security Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-container-security-report
-          path: trivy-container-results.sarif
+          token: ${{ secrets.REPO_DISPATCH_PAT }}
+          repository: riyazsayami/semester3-coursework
+          event-type: container-scan
