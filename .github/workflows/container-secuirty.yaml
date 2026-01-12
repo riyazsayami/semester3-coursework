@@ -1,4 +1,4 @@
-name: Container Image Security Scan
+name: Container Security Scan
 
 on:
   push:
