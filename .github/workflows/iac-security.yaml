@@ -42,7 +42,7 @@
 #           name: trivy-iac-sarif-report
 #           path: trivy-iac-results.sarif
 
-name: Trigger MAIN IaC Scan
+name: Trigger IaC Scan (BRANCH)
 
 on:
   push:
