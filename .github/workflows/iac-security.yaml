@@ -27,6 +27,7 @@ on:
   push:
     branches:
       - main
+      - iac-security
 
   workflow_dispatch:
 

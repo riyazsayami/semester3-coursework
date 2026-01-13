@@ -1,7 +1,15 @@
 name: Container Scan
 
 on:
+  push:
+    branches:
+      - main
+      - container-security
+
   workflow_dispatch:
+
+  repository_dispatch:
+    types: [ container-scan ]
 
 jobs:
   register:
