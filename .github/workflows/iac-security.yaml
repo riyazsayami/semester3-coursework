@@ -21,7 +21,7 @@
 #           severity: "CRITICAL,HIGH,MEDIUM"
 #           format: "table"
 #           exit-code: "0"
-name: Trivy IaC Scan (MAIN)
+name: IaC Scan 
 
 on:
   push:
