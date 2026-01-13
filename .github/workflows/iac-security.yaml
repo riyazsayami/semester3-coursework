@@ -1,4 +1,4 @@
-# name: Trivy IaC Scan (CloudFormation)
+# name: IaC Scan
 
 # on:
 #   workflow_dispatch:
