@@ -1,39 +1,24 @@
-# name: Container Image Security Scan
-
-# on:
-#   push:
-#     branches:
-#       - container-security
-#   workflow_dispatch:
-
-# jobs:
-#   container-scan:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v3
-
-#       - name: Build Docker image
-#         run: |
-#           docker build -t juice-shop:latest .
-
-#       - name: Trivy Image Scan
-#         uses: aquasecurity/trivy-action@0.20.0
-#         with:
-#           image-ref: juice-shop:latest
-#           severity: CRITICAL,HIGH,MEDIUM
-#           format: table
-
-
 name: Container Image Security Scan
 
 on:
+  push:
+    branches:
+      - container-security
   workflow_dispatch:
 
 jobs:
-  test:
+  container-scan:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Test manual trigger"
-#new
+      - uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t juice-shop:latest .
+
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: juice-shop:latest
+          severity: CRITICAL,HIGH,MEDIUM
+          format: table
