@@ -21,7 +21,7 @@
 #           severity: "CRITICAL,HIGH,MEDIUM"
 #           format: "table"
 #           exit-code: "0"
-name: IaC Scan 
+name: IaC Scan
 
 on:
   push:
