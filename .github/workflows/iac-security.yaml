@@ -38,17 +38,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout MAIN repository
-        uses: actions/checkout@v4
-
       - name: Run Trivy IaC Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          scan-type: "config"
-          scan-ref: "."
-          severity: "CRITICAL,HIGH,MEDIUM"
-          format: "sarif"
-          output: "trivy-iac-results.sarif"
+          scan-type: config
+          scan-ref: .
+          severity: CRITICAL,HIGH,MEDIUM
+          format: sarif
+          output: trivy-iac-results.sarif
           exit-code: "0"
 
       - name: Upload IaC SARIF Report
@@ -56,3 +53,24 @@ jobs:
         with:
           name: trivy-iac-sarif-report
           path: trivy-iac-results.sarif
+      # - name: Checkout MAIN repository
+      #   uses: actions/checkout@v4
+
+      # - name: Run Trivy IaC Scan
+      #   uses: aquasecurity/trivy-action@0.20.0
+      #   with:
+      #     scan-type: "config"
+      #     scan-ref: "."
+      #     severity: "CRITICAL,HIGH,MEDIUM"
+      #     format: "sarif"
+      #     output: "trivy-iac-results.sarif"
+      #     exit-code: "0"
+
+      # - name: Upload IaC SARIF Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: trivy-iac-sarif-report
+      #     path: trivy-iac-results.sarif
+     
+
+    

@@ -7,4 +7,18 @@ jobs:
   register:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Registering workflow for manual execution"     
+      - name: Container Security Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: image
+          image-ref: riyazmanandhar/juice-shop:latest
+          severity: CRITICAL,HIGH,MEDIUM
+          format: sarif
+          output: trivy-container-results.sarif
+          exit-code: "0"
+
+      - name: Upload Container Scan Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-container-sarif
+          path: trivy-container-results.sarif    
