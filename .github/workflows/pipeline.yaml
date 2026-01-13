@@ -29,3 +29,14 @@ jobs:
           scan-type: config
           scan-ref: .
           severity: CRITICAL,HIGH,MEDIUM
+      
+      #Container Scan
+      - name: Build Docker image
+        run: docker build -t juice-shop:latest .
+
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: juice-shop:latest
+          severity: CRITICAL,HIGH,MEDIUM
+          format: table
