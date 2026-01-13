@@ -1,0 +1,10 @@
+name: Container Image Security Scan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Registering workflow for manual execution"
