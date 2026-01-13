@@ -1,4 +1,30 @@
-name: Container Image Security Scan
+# name: Container Image Security Scan
+
+# on:
+#   push:
+#     branches:
+#       - container-security
+#   workflow_dispatch:
+
+# jobs:
+#   container-scan:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v3
+
+#       - name: Build Docker image
+#         run: docker build -t juice-shop:latest .
+
+#       - name: Trivy Image Scan
+#         uses: aquasecurity/trivy-action@0.20.0
+#         with:
+#           image-ref: juice-shop:latest
+#           severity: CRITICAL,HIGH,MEDIUM
+#           format: table
+
+
+name: Container Security Scan
 
 on:
   push:
@@ -11,12 +37,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # 🔴 IMPORTANT: Always checkout MAIN branch
+      - name: Checkout MAIN branch code
+        uses: actions/checkout@v3
+        with:
+          ref: main
 
-      - name: Build Docker image
-        run: docker build -t juice-shop:latest .
+      - name: Show checked-out branch (proof)
+        run: echo "Scanning branch: $(git branch --show-current)"
 
-      - name: Trivy Image Scan
+      - name: Build Docker image from MAIN
+        run: |
+          docker build -t juice-shop:latest .
+
+      - name: Trivy Image Scan (MAIN image)
         uses: aquasecurity/trivy-action@0.20.0
         with:
           image-ref: juice-shop:latest
