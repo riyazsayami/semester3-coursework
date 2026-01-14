@@ -7,22 +7,43 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  iac-scan:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  steps:
+    - uses: actions/checkout@v3
 
-      - name: Login to Docker Hub
-        run: |
-          docker login -u riyazmanandhar -p $DOCKERHUB_PAT
-        env:
-          DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
+    - name: Run Trivy IaC Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: CRITICAL,HIGH,MEDIUM
+          format: sarif
+          output: trivy-iac-results.sarif
+    
+    - name: Upload IaC SARIF Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-iac-sarif-report
+          path: trivy-iac-results.sarif
 
-      - name: Build Docker image
-        run: |
-          docker build -t riyazmanandhar/juice-shop:latest .
+  # build:
+  #   runs-on: ubuntu-latest
 
-      - name: Push Docker image
-        run: |
-          docker push riyazmanandhar/juice-shop:latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Login to Docker Hub
+  #       run: |
+  #         docker login -u riyazmanandhar -p $DOCKERHUB_PAT
+  #       env:
+  #         DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
+
+  #     - name: Build Docker image
+  #       run: |
+  #         docker build -t riyazmanandhar/juice-shop:latest .
+
+  #     - name: Push Docker image
+  #       run: |
+  #         docker push riyazmanandhar/juice-shop:latest
