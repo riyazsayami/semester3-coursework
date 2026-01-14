@@ -1,42 +1,5 @@
-# name: MAIN Build
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       # Checkout Code
-#       - name: Checkout repository
-#         uses: actions/checkout@v3
-
-#       # SonarQube Scan
-#       - name: SonarQube Scan
-#         uses: SonarSource/sonarqube-scan-action@v4
-#         env:
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-#       # IaC Security Scan
-#       - name: Run Trivy IaC Scan
-#         uses: aquasecurity/trivy-action@0.20.0
-#         with:
-#           scan-type: config
-#           scan-ref: .
-#           severity: CRITICAL,HIGH,MEDIUM
-      
-#       #Container
-#       - name: Container Security Scan
-#       - run: echo "Registering workflow for manual execution" 
-
-
-
-name: Build & Push Docker Image
+name: Scans and Images (MAIN)
 
 on:
   push:
@@ -93,11 +56,11 @@ jobs:
         with:
           name: trivy-container-sarif
           path: trivy-container-results.sarif
-      # SSH into EC2
 
+      # SSH into EC2
       - name: SSH into EC2
         env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}   # store your .pem file content as a secret
+          SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
           printf "%s" "$SSH_KEY" > ~/.ssh/id_ed25519
