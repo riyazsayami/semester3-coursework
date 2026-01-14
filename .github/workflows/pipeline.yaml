@@ -93,3 +93,14 @@ jobs:
         with:
           name: trivy-container-sarif
           path: trivy-container-results.sarif
+      # SSH into EC2
+
+      - name: SSH into EC2
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}   # store your .pem file content as a secret
+        run: |
+          mkdir -p ~/.ssh
+          printf "%s" "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H 54.235.194.192 >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_ed25519 ubuntu@54.235.194.192 "echo 'SSH connection successful!'"
