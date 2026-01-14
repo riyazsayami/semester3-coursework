@@ -93,35 +93,3 @@ jobs:
         with:
           name: trivy-container-sarif
           path: trivy-container-results.sarif
-
-      # # Login to Docker Hub
-      # - name: Login to Docker Hub
-      #   env:
-      #     DOCKERHUB_PAT: ${{ secrets.DOCKERHUB_PAT }}
-      #   run: |
-      #     docker login -u riyazmanandhar -p $DOCKERHUB_PAT
-
-      # # Build Docker Image
-      # - name: Build Docker image
-      #   run: |
-      #     docker build -t riyazmanandhar/juice-shop:latest .
-
-      # # Push Docker Image
-      # - name: Push Docker image
-      #   run: |
-      #     docker push riyazmanandhar/juice-shop:latest
-
-      # # Deploy to EC2
-      # - name: Update container on EC2
-      #   env:
-      #     SSH_KEY: ${{ secrets.SSH_KEY }}
-      #   run: |
-      #     mkdir -p ~/.ssh
-      #     printf "%s" "$SSH_KEY" > ~/.ssh/id_ed25519
-      #     chmod 600 ~/.ssh/id_ed25519
-      #     ssh-keyscan -H 54.235.194.192 >> ~/.ssh/known_hosts
-      #     ssh -i ~/.ssh/id_ed25519 ubuntu@54.235.194.192 \
-      #       "docker stop juice-shop || true && \
-      #        docker rm juice-shop || true && \
-      #        docker pull riyazmanandhar/juice-shop:latest && \
-      #        docker run -d --restart=always --name juice-shop -p 3000:3000 riyazmanandhar/juice-shop:latest"
