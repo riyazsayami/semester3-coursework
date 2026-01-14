@@ -1,19 +1,20 @@
-name: Build & Push Docker Image
+name: IaC Security Scan
 
 on:
   push:
     branches:
-      - main
+      - iac-security
   workflow_dispatch:
 
 jobs:
   iac-scan:
     runs-on: ubuntu-latest
 
-  steps:
-    - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Run Trivy IaC Scan
+      # IaC Security Scan using Trivy
+      - name: Run Trivy IaC Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
           scan-type: config
@@ -21,12 +22,14 @@ jobs:
           severity: CRITICAL,HIGH,MEDIUM
           format: sarif
           output: trivy-iac-results.sarif
-    
-    - name: Upload IaC SARIF Report
+
+      # Upload SARIF Report
+      - name: Upload IaC SARIF Report
         uses: actions/upload-artifact@v4
         with:
           name: trivy-iac-sarif-report
           path: trivy-iac-results.sarif
+
 
   # build:
   #   runs-on: ubuntu-latest
