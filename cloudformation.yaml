@@ -35,8 +35,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
-      AvailabilityZone: us-east-1a
+      CidrBlock: 10.0.1.0/24   # ✅ Changed to avoid conflict
       Tags:
         - Key: Name
           Value: JuiceShopSubnet
@@ -72,9 +71,15 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
+
         - IpProtocol: tcp
           FromPort: 3000
           ToPort: 3000
+          CidrIp: 0.0.0.0/0
+
+        - IpProtocol: tcp
+          FromPort: 9100
+          ToPort: 9100
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
@@ -83,15 +88,15 @@ Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      Tags:
-        - Key: Name
-          Value: JuiceShopEC2
-      ImageId: ami-084568db4383264d4   # Ubuntu 24.04 LTS
+      ImageId: ami-084568db4383264d4
       InstanceType: t2.micro
       KeyName: !Ref KeyPair
       SubnetId: !Ref Subnet
       SecurityGroupIds:
         - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: JuiceShopEC2
 
       UserData:
         Fn::Base64: !Sub |
@@ -117,19 +122,161 @@ Resources:
             DeleteOnTermination: true
 
   ElasticIP:
-    Description: "Elastic IP for the EC2 VM Instance"
     Type: AWS::EC2::EIP
     Properties:
       Domain: vpc
-      InstanceId: !Ref EC2Instance
       Tags:
         - Key: Name
           Value: JuiceShopEIP
 
+  EIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref EC2Instance
+      EIP: !Ref ElasticIP
+
 Outputs:
   ElasticIPPublicIP:
-    Value: !GetAtt ElasticIP.PublicIp
     Description: Public IP address
+    Value: !Ref ElasticIP
+
   PublicDnsName:
-    Value: !GetAtt EC2Instance.PublicDnsName
     Description: Public DNS name
+    Value: !GetAtt EC2Instance.PublicDnsName
+
+# AWSTemplateFormatVersion: "2010-09-09"
+# Description: CloudFormation template to create a VPC, IG, subnet, route table, SG, and EC2 instance for Juice Shop.
+
+# Parameters:
+#   KeyPair:
+#     Type: AWS::EC2::KeyPair::KeyName
+#     Description: Choose an existing KeyPair
+
+# Resources:
+
+#   VPC:
+#     Type: AWS::EC2::VPC
+#     Properties:
+#       CidrBlock: 10.0.0.0/16
+#       EnableDnsSupport: true
+#       EnableDnsHostnames: true
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopVPC
+
+#   InternetGateway:
+#     Type: AWS::EC2::InternetGateway
+#     Properties:
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopIG
+
+#   VPCGatewayAttachment:
+#     Type: AWS::EC2::VPCGatewayAttachment
+#     Properties:
+#       VpcId: !Ref VPC
+#       InternetGatewayId: !Ref InternetGateway
+
+#   Subnet:
+#     Type: AWS::EC2::Subnet
+#     Properties:
+#       VpcId: !Ref VPC
+#       CidrBlock: 10.0.0.0/24
+#       AvailabilityZone: us-east-1a
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopSubnet
+
+#   RouteTable:
+#     Type: AWS::EC2::RouteTable
+#     Properties:
+#       VpcId: !Ref VPC
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopRouteTable
+
+#   Route:
+#     Type: AWS::EC2::Route
+#     Properties:
+#       RouteTableId: !Ref RouteTable
+#       DestinationCidrBlock: 0.0.0.0/0
+#       GatewayId: !Ref InternetGateway
+
+#   SubnetRouteTableAssociation:
+#     Type: AWS::EC2::SubnetRouteTableAssociation
+#     Properties:
+#       SubnetId: !Ref Subnet
+#       RouteTableId: !Ref RouteTable
+
+#   SecurityGroup:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#       GroupDescription: Allow SSH and Juice Shop traffic
+#       VpcId: !Ref VPC
+#       SecurityGroupIngress:
+#         - IpProtocol: tcp
+#           FromPort: 22
+#           ToPort: 22
+#           CidrIp: 0.0.0.0/0
+#         - IpProtocol: tcp
+#           FromPort: 3000
+#           ToPort: 3000
+#           CidrIp: 0.0.0.0/0
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopSG
+
+#   EC2Instance:
+#     Type: AWS::EC2::Instance
+#     Properties:
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopEC2
+#       ImageId: ami-084568db4383264d4   # Ubuntu 24.04 LTS
+#       InstanceType: t2.micro
+#       KeyName: !Ref KeyPair
+#       SubnetId: !Ref Subnet
+#       SecurityGroupIds:
+#         - !Ref SecurityGroup
+
+#       UserData:
+#         Fn::Base64: !Sub |
+#           #!/bin/bash
+#           apt update -y
+#           apt install -y docker.io
+#           systemctl start docker
+#           systemctl enable docker
+#           usermod -aG docker ubuntu
+
+#           docker pull riyazmanandhar/juice-shop:latest
+#           docker run -d \
+#             --name juice-shop \
+#             -p 3000:3000 \
+#             --restart always \
+#             riyazmanandhar/juice-shop:latest
+
+#       BlockDeviceMappings:
+#         - DeviceName: /dev/sda1
+#           Ebs:
+#             VolumeType: gp2
+#             VolumeSize: 20
+#             DeleteOnTermination: true
+
+#   ElasticIP:
+#     Description: "Elastic IP for the EC2 VM Instance"
+#     Type: AWS::EC2::EIP
+#     Properties:
+#       Domain: vpc
+#       InstanceId: !Ref EC2Instance
+#       Tags:
+#         - Key: Name
+#           Value: JuiceShopEIP
+
+# Outputs:
+#   ElasticIPPublicIP:
+#     Value: !GetAtt ElasticIP.PublicIp
+#     Description: Public IP address
+#   PublicDnsName:
+#     Value: !GetAtt EC2Instance.PublicDnsName
+#     Description: Public DNS name
+
