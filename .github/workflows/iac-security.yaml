@@ -1,4 +1,4 @@
-name: Trigger IaC Scan (BRANCH)
+name: IaC Scan Auot
 
 on:
   push:
@@ -16,5 +16,3 @@ jobs:
           token: ${{ secrets.REPO_DISPATCH_PAT }}   # <-- new PAT secret
           repository: riyazsayami/semester3-coursework
           event-type: iac-scan
-      
-
