@@ -1,4 +1,4 @@
-name: Container Scan
+name: Container Scan Auto
 
 on:
   push:
