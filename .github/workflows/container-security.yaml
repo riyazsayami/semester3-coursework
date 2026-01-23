@@ -22,4 +22,4 @@ jobs:
           image-ref: juice-shop:latest
           severity: CRITICAL,HIGH,MEDIUM
           format: table
-      #donee
+      
