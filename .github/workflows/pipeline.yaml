@@ -3,7 +3,7 @@ name: IaC Security Scan
 on:
   push:
     branches:
-      - iac-security
+      - main
   workflow_dispatch:
 
 jobs:
