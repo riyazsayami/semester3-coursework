@@ -1,4 +1,4 @@
-name: Container Scan Pipeline
+name: Container Scan (Pipeline)
 
 on:
   push:
