@@ -1,5 +1,5 @@
 
-name: Scans and Images (MAIN)
+name: Scans and Images (MAIN WORKFLOW)
 
 on:
   push:
